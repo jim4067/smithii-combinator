@@ -1,0 +1,25 @@
+{
+	"back": {
+		"Aqua.png": 3,
+		"Hollywood.png": 1
+	},
+	"eyes": {
+		"Closed.png": 2,
+		"Concern.png": 1
+	},
+	"head": {
+		"Bitcoin Beanie.png": 5,
+		"Brain.png": 2
+	},
+	"mouth": {
+		"Alien.png": 1
+	},
+	"outfit": {
+		"Akhtar.png": 4,
+		"Angel.png": 3
+	},
+	"skin": {
+		"Baseball.png": 2,
+		"Basketball.png": 1
+	}
+}
