@@ -11,6 +11,7 @@ import {
 	generateEqualWeightedCombinations,
 	generateRandomCombinations,
 	generateWeightedCombinations,
+	uploadAssetsPinata,
 } from "./main";
 import type { LayerPath, Weights } from "./types";
 
@@ -49,15 +50,25 @@ const exampleMd = {
 //  */
 // const unfurledLayers = unfurlLayerPaths(layerPaths);
 // // ! debug: sliced first 10 items
-// const combinations = generateEqualWeightedCombinations(unfurledLayers).slice(0,10);
+// const combinations = generateEqualWeightedCombinations(unfurledLayers).slice(
+// 	0,
+// 	10
+// );
 // generateImages(combinations).then().catch(console.error);
-// generateAndWriteMDFile(
+// uploadAssetsPinata(
 // 	combinations,
-// 	exampleMd.image,
 // 	exampleMd.properties,
 // 	exampleMd.description,
-// 	exampleMd.external_url
+// 	exampleMd.external_url,
+// 	"image/png"
 // );
+// // generateAndWriteMDFile(
+// // 	combinations,
+// // 	exampleMd.image,
+// // 	exampleMd.properties,
+// // 	exampleMd.description,
+// // 	exampleMd.external_url
+// // );
 
 // /**
 //  *  -------------------------------------------- example two

@@ -1,4 +1,10 @@
-import { generateOffchainJsonMD, writeToMetadataFile } from "./helpers";
+import {
+	generateOffchainJsonMD,
+	getImagePaths,
+	uploadImagePinata,
+	uploadJsonPinata,
+	writeToMetadataFile,
+} from "./helpers";
 import type { LayerPath, UnfurledLayers, WeightedImage } from "./types";
 
 /**
@@ -154,7 +160,6 @@ export function generateAndWriteMDFile(
 	externalUrl: string,
 	animationUrl?: string
 ) {
-	// ! debug(Jimii): remove the slice
 	combinations.map((item, index) => {
 		const md = generateOffchainJsonMD(
 			item,
@@ -168,4 +173,71 @@ export function generateAndWriteMDFile(
 
 		writeToMetadataFile(index, md);
 	});
+}
+
+/**
+ *
+ * upload the image and generated json metadata to Pinata
+ *
+ * assumes that the images have already been generated,
+ * and named in the `imagesOutput`
+ *
+ *
+ * @param combinations -  combination to use to generate the md.
+ * @param properties - An object representing external files and category of project.
+ *                    (// todo(Jimii)).
+ * @param description - A brief description of the project.
+ * @param externalUrl - external image url for the project.
+ * @param mimeType - file type.
+ * @param animationUrl - An optional URL for an animation related to the image.
+ * @param outputDir - Optional, if the generated images are output in a different directory.
+ *
+ */
+export async function uploadAssetsPinata(
+	combinations: UnfurledLayers[],
+	properties: any,
+	description: string,
+	externalUrl: string,
+	mimeType: string,
+	animationUrl?: string,
+	outputDir: string = "imagesOutput"
+) {
+	console.log("uploading assets.....");
+	const uploadAll = combinations.map(async (item, index) => {
+		const imagePath = `./${outputDir}/${index}.${
+			mimeType.split("/").pop() as string
+		}`;
+
+		try {
+			await new Promise((r) => setTimeout(r, 2000));
+			const image = await uploadImagePinata(imagePath, mimeType);
+			await new Promise((r) => setTimeout(r, 2000));
+
+			// generate json
+			const metadata = generateOffchainJsonMD(
+				item,
+				index,
+				image,
+				properties,
+				description,
+				externalUrl,
+				animationUrl
+			);
+
+			// upload json
+			let jsonUri = await uploadJsonPinata(metadata, `${index}.json`);
+			console.log(index, "->", jsonUri);
+		} catch (err) {
+			console.error(`Error uploading -> ${index}:`, err);
+			throw err;
+		}
+	});
+
+	// Wait for all uploads to complete
+	try {
+		await Promise.all(uploadAll);
+	} catch (error) {
+		console.error("Error uploading assets:", error);
+		throw error;
+	}
 }
