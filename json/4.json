@@ -1,0 +1,34 @@
+{
+  "name": "#4",
+  "description": "this is a description example",
+  "image": "https://famousfoxes.com/hd/6908.png",
+  "external_url": "example.external uri",
+  "attributes": [
+    {
+      "trait_type": "background",
+      "value": "Champagne"
+    },
+    {
+      "trait_type": "skin",
+      "value": "Bowie"
+    },
+    {
+      "trait_type": "outfit",
+      "value": "Camo"
+    }
+  ],
+  "properties": {
+    "creators": [
+      {
+        "address": "3pMvTLUA9NzZQd4gi725p89mvND1wRNQM3C8XEv1hTdA",
+        "share": 100
+      }
+    ],
+    "files": [
+      {
+        "type": "image/png",
+        "url": "https://famousfoxes.com/hd/6908.png"
+      }
+    ]
+  }
+}

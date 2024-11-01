@@ -1,13 +1,25 @@
-import fs, { readdirSync } from "fs";
+import { Blob } from "buffer";
+import fs from "fs";
 import path from "path";
+import { PinataSDK } from "pinata-web3";
 import sharp from "sharp";
 
+import { pinataGateway, pinataJWT } from "./config";
 import type {
 	LayerPath,
 	UnfurledLayers,
 	WeightedImage,
 	Weights,
 } from "./types";
+
+/**
+ * Instantiate Pinata SDK.
+ *
+ */
+const pinata = new PinataSDK({
+	pinataJwt: pinataJWT,
+	pinataGateway: pinataGateway,
+});
 
 /**
  * Retrieve Images from specified directory.
@@ -159,4 +171,56 @@ export function writeToMetadataFile(index: number, metadata: any) {
 		path.join("json", `${index}.json`),
 		JSON.stringify(metadata, null, 2)
 	);
+}
+
+/**
+ * Upload file to pinata.
+ *
+ * @param path image path.
+ * @param mimeType image mime type
+ * @returns uploaded file URI.
+ *
+ */
+export async function uploadImagePinata(
+	path: string,
+	mimeType: string
+): Promise<string> {
+	try {
+		const buffer = fs.readFileSync(path);
+		const blob = new Blob([buffer.toString()]) as unknown as BlobPart;
+
+		const name = path.split("/").pop() ?? "unknown.png"; // todo(Jimii): add dummy unknown png
+		const file = new File([blob], name, {
+			type: mimeType,
+		});
+
+		const upload = await pinata.upload.file(file);
+
+		return `${pinataGateway}/ipfs/${upload.IpfsHash}`;
+	} catch (err) {
+		console.error("error uploading file", err);
+		throw err;
+	}
+}
+
+// uploadImagePinata("path"); // ! debug
+
+/**
+ * Upload json to pinata.
+ *
+ * @param metadata metadata object to upload.
+ * @returns uploaded metadata URI.
+ *
+ */
+export async function uploadJsonPinata(
+	metadata: any,
+	name: string
+): Promise<string> {
+	const upload = await pinata.upload.json(metadata, {
+		metadata: {
+			name,
+		},
+	});
+
+	return `${pinataGateway}/ipfs/${upload.IpfsHash}`;
 }
